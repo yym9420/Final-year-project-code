@@ -1,0 +1,48 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .App {
+    text-align: center;
+  }
+  
+  header {
+    background-color: #3498db;
+    color: #fff;
+    padding: 20px;
+  }
+  
+  .search-box {
+    margin-top: 10px;
+  }
+  
+  .search-box input {
+    padding: 8px;
+    width: 200px;
+  }
+  
+  .search-box button {
+    padding: 8px;
+    background-color: #2ecc71;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  section {
+    padding: 20px;
+  }
+  
+  h2 {
+    color: #3498db;
+  }
+  
+  footer {
+    background-color: #ecf0f1;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
