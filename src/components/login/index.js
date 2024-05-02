@@ -1,83 +1,37 @@
-import React, { useRef, useState } from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/authContext';
+import { Button } from '@mui/material';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../firebase'; // 导入 firebase 模块并从中获取 auth 对象
 const Login = () => {
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const { login } = useAuth();
-  const [error, setError] = useState('');
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setError('');
-      setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
-      navigate('/home');
-    } catch {
-      setError('Failed to log in');
+  useEffect(() => {
+    // 如果用户已登录，则重定向到主页或其他受保护的页面
+    if (currentUser) {
+      // TODO: 处理重定向逻辑
     }
-    setLoading(false);
+  }, [currentUser]);
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      setLoading(true);
+      await signInWithPopup(auth, provider);
+      // Google 登录成功后会触发 onAuthStateChanged 事件，自动更新 currentUser
+    } catch (error) {
+      console.error('Google 登录失败：', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-      }}
-    >
-       <Typography variant="h4" gutterBottom>
-       Welcome to medical answer robot
-      </Typography>
-      <Typography variant="h4" gutterBottom>
-        Log in
-      </Typography>
-      <form
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          maxWidth: '300px',
-          width: '100%',
-        }}
-        onSubmit={handleSubmit}
-      >
-        {error && <Alert severity="error" sx={{ marginBottom: 2 
-}}>{error}</Alert>}
-        <TextField
-          id="email"
-          label="Email"
-          variant="outlined"
-          inputRef={emailRef}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          id="password"
-          label="Password"
-          variant="outlined"
-          type="password"
-          inputRef={passwordRef}
-          sx={{ marginBottom: 2 }}
-        />
-        <Button variant="contained" type="submit" disabled={loading} sx={{ 
-marginBottom: 2 }}>
-          Log in
-        </Button>
-      </form>
-      <Typography>
-        Don't have an account? <Link to="/signup">Sign up</Link>
-      </Typography>
-    </Box>
+    <div>
+      <h2>登录页面</h2>
+      <Button onClick={handleGoogleLogin} disabled={loading}>使用 Google 登录</Button>
+    </div>
   );
 };
 

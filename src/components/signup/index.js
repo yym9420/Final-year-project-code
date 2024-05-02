@@ -5,7 +5,8 @@ import { Button, Card, Typography } from '@mui/material';
 import { useAuth } from '../../contexts/authContext';
 import Alert from '@mui/material/Alert';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'; // 添加 Google 登录相关的引入
+import { auth } from '../../firebase'; // 导入 firebase 模块并从中获取 auth 对象
 const Signup = () => {
 
   const emailRef = useRef();
@@ -18,7 +19,6 @@ const Signup = () => {
   
 
   const handleSubmit = async(e) => {
-
     e.preventDefault();
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError('Password do not match')
@@ -34,6 +34,20 @@ const Signup = () => {
     }
     setLoading(false);
   }
+
+  const handleGoogleSignup = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      setLoading(true);
+      const result = await signInWithPopup(auth, provider);
+      navigate('/');
+    } catch (error) {
+      console.error('Google Sign up failed:', error);
+      setError('Failed to sign up with Google');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Card>
@@ -69,16 +83,16 @@ type="password" inputRef={passwordConfirmRef} sx={{paddingBottom: 2}} />
           <Button variant="contained" type="submit" disabled={loading}>Sign 
 up</Button>
         </form>
+        <Button variant="contained" onClick={handleGoogleSignup} disabled={loading}>Sign up with Google</Button> {/* 添加 Google 登录按钮 */}
         <div sx={{ marginTop: 2 }}>
-  Already have an account?{' '}
-  <Link to="/" style={{ textDecoration: 'none', color: 'primary.main' }}>
-    Log in
-  </Link>
-</div>
+          Already have an account?{' '}
+          <Link to="/" style={{ textDecoration: 'none', color: 'primary.main' }}>
+            Log in
+          </Link>
+        </div>
       </Box>
     </Card>
   );
 }
 
 export default Signup;
-
